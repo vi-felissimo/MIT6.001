@@ -1,4 +1,4 @@
-# find the longest alphabetical substring in s
+# find the longest alphabetical substring in s1
 s = input("enter a string pls:")
 CountS = 0
 LCount = 1
