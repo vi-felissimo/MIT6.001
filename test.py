@@ -1,20 +1,27 @@
-def isIn(char, aStr):
-    '''
-    char: a single character
-    aStr: an alphabetized string
+def fac(n):
+    intNum = []
+    ## check if n can be divided by i
+    for i in range(1, n):
+        if (n % i == 0):
+                intNum.append(i)
+    return intNum
+
+#list store all fac sums
+def listSum(n):
+    d = {}
+    for i in range(1, n+1):
+        d[i] = sum(fac(i))        
+    return d
     
-    returns: True if char is in aStr; False otherwise
-    '''
-    #compare char and the middle char of aStr
-    cpChar = len(aStr)//2
-    if len(aStr)==1:
-        return char == aStr[0]
-    elif len(aStr) == 0:
-        return False
-    elif char > aStr[cpChar]:
-        return isIn(char, aStr[cpChar:])
-    elif char == aStr[cpChar]:
-        return True
-    else:
-        return isIn(char, aStr[:cpChar])
-    
+n = int(input('Enter a number: '))
+ResultDict = listSum(n)
+for k,v in ResultDict.items():
+    #if ResultDict[k] == ResultDict[v]:
+    #print('Same.', k , v)
+    if k != v:
+        try:
+            if k == ResultDict[v]:
+                print(k, '-', v)
+                continue
+        except:
+            continue
