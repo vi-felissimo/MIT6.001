@@ -71,8 +71,13 @@ def getWordScore(word, n):
     n: integer (HAND_SIZE; i.e., hand size required for additional points)
     returns: int >= 0
     """
-    # TO DO ... <-- Remove this comment when you code this function
-
+    score = 0
+    for char in word:
+        score += SCRABBLE_LETTER_VALUES[char]
+    score *= len(word)
+    if len(word) == n:
+        score += 50
+    return score
 
 
 #
@@ -142,7 +147,17 @@ def updateHand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
-    # TO DO ... <-- Remove this comment when you code this function
+    newhand = hand.copy()
+    for char in word:
+        newhand[char] -= 1
+    # remove 0 time charaters after update
+    charToDel = []
+    for charH, times in newhand.items():
+        if times == 0:
+            charToDel.append(charH)
+    for i in charToDel:
+        newhand.pop(i)
+    return newhand
 
 
 
@@ -160,8 +175,16 @@ def isValidWord(word, hand, wordList):
     hand: dictionary (string -> int)
     wordList: list of lowercase strings
     """
-    # TO DO ... <-- Remove this comment when you code this function
-
+    handCpy = hand.copy()
+    for char in word:
+        if char not in hand.keys():
+            return False
+        handCpy[char] -= 1
+        if handCpy[char] < 0:
+            return False
+    if word in wordList:
+        return True
+    return False
 
 #
 # Problem #4: Playing a hand
@@ -174,8 +197,8 @@ def calculateHandlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    # TO DO... <-- Remove this comment when you code this function
-
+    charCounts = hand.values
+    return(sum(charCounts))
 
 
 def playHand(hand, wordList, n):
@@ -200,6 +223,29 @@ def playHand(hand, wordList, n):
       n: integer (HAND_SIZE; i.e., hand size required for additional points)
       
     """
+    userTy = []
+    tlScore = 0
+    while calculateHandlen(hand)>0:
+        print('Current Hand: ', end = '')
+        displayHand(hand) 
+        userTy = input("Enter word, or a '.' to finish game: ")
+        if userTy == '.':
+            print('Goodbye!', end=' ')
+            break
+        elif isValidWord(userTy, hand, wordList):
+            hand = updateHand(hand, userTy)
+            timeScore = getWordScore(userTy, n)
+            tlScore += timeScore
+            print('"%s" earned %d points.' % (userTy, timeScore), end='')
+        else:
+            print('Invalid word, please try again.')
+            continue
+        print('Total score: %d points.' % tlScore)
+    if calculateHandlen(hand) == 0:
+        print('Run out of letter.', end = ' ')
+    print('Total score: %d points.' % tlScore) 
+   
+
     # BEGIN PSEUDOCODE <-- Remove this comment when you code this function; do your coding within the pseudocode (leaving those comments in-place!)
     # Keep track of the total score
     
@@ -246,11 +292,23 @@ def playGame(wordList):
  
     2) When done playing the hand, repeat from step 1    
     """
-    # TO DO ... <-- Remove this comment when you code this function
-    print("playGame not yet implemented.") # <-- Remove this line when you code the function
-   
-
-
+    userType = hand = []
+    while True: 
+        userType = input("Enter n to deal a new hand, r to replay the last hand, or e to end game: ")
+        if userType == 'n':
+            hand = dealHand(HAND_SIZE)
+            playHand(hand, wordList, HAND_SIZE)
+        elif userType == 'r':
+            if not hand:
+                print('You have not played a hand yet. Please play a new hand first!')
+                continue
+            playHand(hand, wordList, HAND_SIZE)
+        elif userType == 'e':
+            break
+        else:
+            print('Invalid commend.')
+            continue
+    return None
 
 #
 # Build data structures used for entire session and play game
